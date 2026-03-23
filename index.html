@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Paulo Gabriel — Editor de Vídeo & Motion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F5F2EE;
+      --bg2: #EDEAE5;
+      --ink: #1C1917;
+      --ink-light: #6B6560;
+      --accent: #C0392B;
+      --accent2: #E8D5B0;
+      --white: #FDFCFB;
+      --border: rgba(28,25,23,0.1);
+      --r: 4px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.4rem 6vw;
+      background: rgba(245,242,238,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem; font-weight: 600; letter-spacing: 0.02em;
+      color: var(--ink); text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.8rem; font-weight: 500; letter-spacing: 0.12em;
+      text-transform: uppercase; text-decoration: none;
+      color: var(--ink-light); transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding-top: 5rem;
+      overflow: hidden;
+    }
+    .hero-left {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 6vw 4vw 6vw 6vw;
+      animation: fadeUp .9s ease both;
+    }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: .5rem;
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 1.6rem;
+    }
+    .hero-tag::before {
+      content: ''; display: block; width: 2rem; height: 1px; background: var(--accent);
+    }
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.2rem, 6vw, 5.5rem);
+      font-weight: 300; line-height: 1.07;
+      color: var(--ink); margin-bottom: 1.8rem;
+    }
+    h1 em { font-style: italic; color: var(--accent); }
+    .hero-bio {
+      font-size: 1rem; line-height: 1.75; color: var(--ink-light);
+      max-width: 42ch; margin-bottom: 2.8rem;
+      font-weight: 300;
+    }
+    .hero-cta {
+      display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-block;
+      background: var(--ink); color: var(--white);
+      padding: .8rem 2rem; border-radius: 2rem;
+      font-size: .82rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; text-decoration: none;
+      transition: background .2s, transform .2s;
+    }
+    .btn-primary:hover { background: var(--accent); transform: translateY(-2px); }
+    .btn-ghost {
+      font-size: .82rem; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--ink); text-decoration: none;
+      display: flex; align-items: center; gap: .4rem;
+      transition: color .2s; background: none; border: none;
+      cursor: pointer; font-family: inherit;
+    }
+    .btn-ghost::after { content: '→'; transition: transform .2s; }
+    .btn-ghost:hover { color: var(--accent); }
+    .btn-ghost:hover::after { transform: translateX(4px); }
+
+    .hero-right {
+      position: relative; overflow: hidden;
+      animation: fadeIn 1.2s ease both;
+    }
+    .hero-visual {
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, #2C1810 0%, #1C1917 60%, #3D1F15 100%);
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .film-strip {
+      position: absolute; inset: 0;
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          transparent, transparent 2rem,
+          rgba(255,255,255,0.03) 2rem, rgba(255,255,255,0.03) 2.1rem
+        );
+    }
+    .hero-badge {
+      position: relative; z-index: 2;
+      text-align: center; color: var(--white);
+    }
+    .hero-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(5rem, 12vw, 9rem);
+      font-weight: 300; line-height: 1;
+      color: rgba(255,255,255,0.12);
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      user-select: none; white-space: nowrap;
+    }
+    .hero-circle {
+      width: 200px; height: 200px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.15);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 0.4rem;
+      position: relative; z-index: 2;
+    }
+    .hero-circle-icon { font-size: 2.5rem; opacity: 0.9; }
+    .hero-circle p {
+      font-size: 0.72rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(255,255,255,0.6);
+    }
+    .hero-stats {
+      position: absolute; bottom: 2.5rem; left: 0; right: 0;
+      display: flex; justify-content: center; gap: 3rem;
+    }
+    .stat { text-align: center; color: var(--white); }
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 400; display: block;
+      color: rgba(255,255,255,0.9);
+    }
+    .stat-label {
+      font-size: 0.65rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: rgba(255,255,255,0.45);
+    }
+
+    /* ── SECTION BASE ── */
+    section { padding: 7rem 6vw; }
+    .section-header { margin-bottom: 4rem; }
+    .section-tag {
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--accent);
+      display: flex; align-items: center; gap: .6rem;
+      margin-bottom: 1rem;
+    }
+    .section-tag::before { content: ''; width: 1.5rem; height: 1px; background: var(--accent); }
+    h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 4vw, 3.5rem);
+      font-weight: 300; line-height: 1.15;
+    }
+    h2 em { font-style: italic; color: var(--accent); }
+
+    /* ── ABOUT ── */
+    #sobre {
+      background: var(--white);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 5vw;
+      align-items: center;
+    }
+    .about-text p {
+      font-size: 1rem; line-height: 1.85; color: var(--ink-light);
+      margin-bottom: 1.2rem; font-weight: 300;
+    }
+    .about-text p strong { color: var(--ink); font-weight: 600; }
+    .skills-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    }
+    .skill-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.4rem;
+      transition: border-color .2s, transform .2s;
+    }
+    .skill-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .skill-icon { font-size: 1.5rem; margin-bottom: .6rem; }
+    .skill-name {
+      font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--ink);
+    }
+    .skill-desc { font-size: 0.78rem; color: var(--ink-light); margin-top: .25rem; }
+
+    /* ── PORTFOLIO ── */
+    #portfolio { background: var(--bg); }
+    .portfolio-intro {
+      font-size: 1rem; color: var(--ink-light); max-width: 55ch;
+      line-height: 1.75; font-weight: 300; margin-top: .8rem;
+    }
+    .videos-grid {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+    .video-card {
+      background: var(--white);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 20px rgba(28,25,23,0.06);
+      transition: box-shadow .3s, transform .3s;
+      width: 100%;
+      max-width: 340px;
+    }
+    .video-card:hover { box-shadow: 0 12px 40px rgba(28,25,23,0.12); transform: translateY(-4px); }
+    .video-wrapper {
+      position: relative; padding-top: 177.78%; /* 9:16 — Shorts vertical */
+      background: #1C1917;
+    }
+    .video-wrapper iframe {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; border: none;
+    }
+    .video-info { padding: 1.2rem 1.4rem 1.4rem; }
+    .video-category {
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: .4rem;
+    }
+    .video-title {
+      font-size: 0.95rem; font-weight: 600; color: var(--ink);
+      line-height: 1.4;
+    }
+    .video-desc {
+      font-size: 0.8rem; color: var(--ink-light); margin-top: .35rem;
+      line-height: 1.6;
+    }
+
+    /* ── CONTACT / CTA ── */
+    #contato {
+      background: var(--ink);
+      color: var(--white);
+      text-align: center;
+      padding: 7rem 6vw;
+    }
+    #contato .section-tag { justify-content: center; color: var(--accent2); }
+    #contato .section-tag::before { background: var(--accent2); }
+    #contato h2 { color: var(--white); margin-bottom: 1rem; }
+    #contato h2 em { color: var(--accent2); }
+    .contact-sub {
+      font-size: 1rem; color: rgba(255,255,255,0.55);
+      max-width: 50ch; margin: 0 auto 3rem; line-height: 1.75; font-weight: 300;
+    }
+    .contact-buttons {
+      display: flex; justify-content: center; gap: 1.2rem; flex-wrap: wrap;
+    }
+    .btn-wa, .btn-ig {
+      display: inline-flex; align-items: center; gap: .7rem;
+      padding: .9rem 2.2rem; border-radius: 3rem;
+      font-size: .85rem; font-weight: 600; letter-spacing: 0.06em;
+      text-decoration: none; transition: transform .2s, box-shadow .2s;
+    }
+    .btn-wa {
+      background: #25D366; color: #fff;
+    }
+    .btn-wa:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(37,211,102,0.35); }
+    .btn-ig {
+      background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      color: #fff;
+    }
+    .btn-ig:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(220,39,67,0.35); }
+    .btn-icon { font-size: 1.15rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #111;
+      color: rgba(255,255,255,0.3);
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.75rem; letter-spacing: 0.08em;
+    }
+    footer span { color: var(--accent); }
+
+    /* ── MODAL CONTATO ── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(28,25,23,0.45);
+      backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s ease;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+    .modal-box {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      width: 90%; max-width: 360px;
+      text-align: center;
+      box-shadow: 0 24px 60px rgba(28,25,23,0.2);
+      transform: translateY(20px) scale(0.97);
+      transition: transform .3s ease;
+    }
+    .modal-overlay.open .modal-box { transform: translateY(0) scale(1); }
+
+    .modal-close {
+      position: absolute; top: 1rem; right: 1.2rem;
+      background: none; border: none; cursor: pointer;
+      font-size: 1.4rem; color: var(--ink-light);
+      line-height: 1; transition: color .2s;
+    }
+    .modal-close:hover { color: var(--accent); }
+    .modal-box { position: relative; }
+
+    .modal-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem; font-weight: 400;
+      color: var(--ink); margin-bottom: .4rem;
+    }
+    .modal-sub {
+      font-size: .8rem; color: var(--ink-light);
+      margin-bottom: 1.8rem; line-height: 1.6;
+    }
+    .modal-links { display: flex; flex-direction: column; gap: .85rem; }
+    .modal-btn-wa, .modal-btn-ig {
+      display: flex; align-items: center; justify-content: center; gap: .7rem;
+      padding: .95rem 1.5rem; border-radius: 3rem;
+      font-size: .9rem; font-weight: 600;
+      text-decoration: none; transition: transform .2s, box-shadow .2s;
+    }
+    .modal-btn-wa { background: #25D366; color: #fff; }
+    .modal-btn-wa:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37,211,102,0.35); }
+    .modal-btn-ig {
+      background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      color: #fff;
+    }
+    .modal-btn-ig:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(220,39,67,0.35); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+    .reveal {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-right { height: 55vw; }
+      #sobre { grid-template-columns: 1fr; }
+      nav { padding: 1rem 5vw; }
+      .nav-links { display: none; }
+      h1 { font-size: 2.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-logo" href="#"><span>P</span>aulo Gabriel</a>
+    <ul class="nav-links">
+      <li><a href="#sobre">Sobre</a></li>
+      <li><a href="#portfolio">Portfólio</a></li>
+      <li><a href="#contato">Contato</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-left">
+      <span class="hero-tag">Editor de Vídeo & Motion Designer</span>
+      <h1>Histórias que<br><em>prendem</em><br>quem assiste.</h1>
+      <p class="hero-bio">
+        Há 3 anos editando vídeos e aprendendo a contar histórias que realmente seguram quem assiste.
+      </p>
+      <div class="hero-cta">
+        <a href="#portfolio" class="btn-primary" onclick="document.getElementById('portfolio').scrollIntoView({behavior:'smooth'}); return false;">Ver Portfólio</a>
+        <button class="btn-ghost" onclick="openModal()">Falar comigo</button>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="hero-visual">
+        <div class="film-strip"></div>
+        <div class="hero-number">PG</div>
+        <div class="hero-circle">
+          <span class="hero-circle-icon">🎬</span>
+          <p>Motion & Edit</p>
+        </div>
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-num">3+</span>
+            <span class="stat-label">Anos de xp</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">∞</span>
+            <span class="stat-label">Histórias</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">100%</span>
+            <span class="stat-label">Dedicação</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOBRE -->
+  <section id="sobre">
+    <div class="about-text reveal">
+      <div class="section-header">
+        <span class="section-tag">Sobre mim</span>
+        <h2>Mais do que cortes<br>e <em>transições.</em></h2>
+      </div>
+      <p>
+        Oi, eu sou o <strong>Paulo Gabriel</strong>. Edito vídeos há 3 anos e nesse tempo aprendi que edição de verdade vai muito além de juntar clipes — é sobre ritmo, emoção e fazer o espectador sentir algo.
+      </p>
+      <p>
+        Trabalho com <strong>edição narrativa, motion graphics e tratamento de cor</strong> para criar vídeos que não só ficam bonitos, mas que funcionam — seja pra vender, pra emocionar ou pra engajar.
+      </p>
+      <p>
+        Cada projeto é uma história diferente. E eu tô aqui pra te ajudar a contar a sua do jeito certo.
+      </p>
+    </div>
+
+    <div class="skills-grid reveal">
+      <div class="skill-card">
+        <div class="skill-icon">✂️</div>
+        <div class="skill-name">Edição Narrativa</div>
+        <div class="skill-desc">Ritmo, cortes e storytelling que prendem do início ao fim.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">🎞️</div>
+        <div class="skill-name">Motion Graphics</div>
+        <div class="skill-desc">Animações e elementos visuais que elevam qualquer vídeo.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">🎨</div>
+        <div class="skill-name">Color Grading</div>
+        <div class="skill-desc">Tratamento de cor profissional com identidade visual forte.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">🔊</div>
+        <div class="skill-name">Sound Design</div>
+        <div class="skill-desc">Trilha, efeitos e sincronização que amplificam a emoção.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section id="portfolio">
+    <div class="section-header reveal">
+      <span class="section-tag">Portfólio</span>
+      <h2>Trabalhos que<br><em>falam por si.</em></h2>
+      <p class="portfolio-intro">
+        Cada vídeo aqui é uma história diferente. Clica, assiste e sente o que a edição certa faz pela narrativa.
+      </p>
+    </div>
+
+    <div class="videos-grid">
+
+      <!-- VÍDEO 1 -->
+      <div class="video-card reveal">
+        <div style="padding:177.78% 0 0 0;position:relative;">
+          <iframe src="https://player.vimeo.com/video/1176350023?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="solução poucas visualizações"></iframe>
+        </div>
+        <div class="video-info">
+          <div class="video-category">Edição</div>
+          <div class="video-title">Solução para vídeos com poucas visualizações</div>
+        </div>
+      </div>
+
+      <!-- VÍDEO 2 -->
+      <div class="video-card reveal">
+        <div style="padding:177.78% 0 0 0;position:relative;">
+          <iframe src="https://player.vimeo.com/video/1176351448?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Vídeo profissional vs amador"></iframe>
+        </div>
+        <div class="video-info">
+          <div class="video-category">Edição</div>
+          <div class="video-title">Vídeo profissional vs vídeo normal</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CONTATO -->
+  <section id="contato">
+    <div class="reveal">
+      <span class="section-tag">Contato</span>
+      <h2>Vamos criar algo<br><em>incrível juntos?</em></h2>
+      <p class="contact-sub">
+        Tem um projeto em mente? Me chama! Respondo rápido e adoro uma boa conversa antes de começar.
+      </p>
+      <div class="contact-buttons">
+        <a href="https://wa.me/98987476513" target="_blank" rel="noopener" class="btn-wa">
+          <span class="btn-icon">📲</span> WhatsApp
+        </a>
+        <a href="https://www.instagram.com/paulog.motion" target="_blank" rel="noopener" class="btn-ig">
+          <span class="btn-icon">📸</span> @paulog.motion
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL FALAR COMIGO -->
+  <div class="modal-overlay" id="contactModal" onclick="handleOverlayClick(event)">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-title">Vamos conversar?</div>
+      <p class="modal-sub">Me chama por onde preferir — respondo rápido! 🚀</p>
+      <div class="modal-links">
+        <a href="https://wa.me/98987476513" target="_blank" rel="noopener" class="modal-btn-wa">
+          📲 WhatsApp
+        </a>
+        <a href="https://www.instagram.com/paulog.motion" target="_blank" rel="noopener" class="modal-btn-ig">
+          📸 @paulog.motion
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 <span>Paulo Gabriel</span> — Editor de Vídeo & Motion Designer. Feito com dedicação e muita cafeína.</p>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Modal
+    function openModal() {
+      document.getElementById('contactModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+      document.getElementById('contactModal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    function handleOverlayClick(e) {
+      if (e.target === document.getElementById('contactModal')) closeModal();
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+  </script>
+  <script src="https://player.vimeo.com/api/player.js"></script>
+</body>
+</html>
