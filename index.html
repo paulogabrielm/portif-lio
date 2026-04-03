@@ -79,7 +79,6 @@
       padding: 0 1.5rem;
     }
 
-    /* ── AVATAR ── */
     .avatar-wrap {
       width: 90px; height: 90px;
       border-radius: 50%;
@@ -87,12 +86,14 @@
       margin: 0 auto 1.2rem;
       border: 2px solid var(--accent);
       box-shadow: 0 0 0 4px rgba(232,201,122,0.12);
+      display: block;
     }
     .avatar {
       width: 100%; height: 100%;
       object-fit: cover;
-      object-position: center top;
+      object-position: center 20%;
       filter: grayscale(20%);
+      display: block;
     }
 
     /* ── HEADER ── */
@@ -301,8 +302,14 @@
       .videos {
         flex-direction: row;
         align-items: flex-start;
+        flex-wrap: wrap;
+        justify-content: center;
       }
-      .video-card { flex: 1; }
+      .video-card {
+        flex: 1;
+        min-width: 200px;
+        max-width: 240px;
+      }
     }
   </style>
 </head>
@@ -335,14 +342,21 @@
     <!-- VÍDEOS -->
     <div class="videos">
 
+      <!-- VÍDEO CLIENTE — primeiro -->
       <div class="video-card">
         <div class="video-frame">
-          <iframe
-            src="https://player.vimeo.com/video/1176350023?badge=0&autopause=0&player_id=0&app_id=58479"
-            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-            referrerpolicy="strict-origin-when-cross-origin"
-            title="Solução para vídeos com poucas visualizações">
-          </iframe>
+          <iframe src="https://player.vimeo.com/video/1179656489?badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="vídeo sem edição vs com edição dinâmica"></iframe>
+        </div>
+        <div class="video-label">
+          <span class="video-title">Sem edição vs com edição dinâmica</span>
+          <span class="video-tag">Cliente</span>
+        </div>
+      </div>
+
+      <!-- VÍDEO 1 -->
+      <div class="video-card">
+        <div class="video-frame">
+          <iframe src="https://player.vimeo.com/video/1176350023?badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="solução poucas visualizações"></iframe>
         </div>
         <div class="video-label">
           <span class="video-title">Solução para vídeos com poucas visualizações</span>
@@ -350,14 +364,10 @@
         </div>
       </div>
 
+      <!-- VÍDEO 2 -->
       <div class="video-card">
         <div class="video-frame">
-          <iframe
-            src="https://player.vimeo.com/video/1176351448?badge=0&autopause=0&player_id=0&app_id=58479"
-            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-            referrerpolicy="strict-origin-when-cross-origin"
-            title="Vídeo profissional vs vídeo normal">
-          </iframe>
+          <iframe src="https://player.vimeo.com/video/1176351448?badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Vídeo profissional vs amador"></iframe>
         </div>
         <div class="video-label">
           <span class="video-title">Vídeo profissional vs vídeo normal</span>
